@@ -1,0 +1,9 @@
+{
+  "name": "Auto-cpufreq Switcher",
+  "description": "Simple governor switcher Gnome-Shell-Extension for auto-cpufreq",
+  "uuid": "auto-cpufreq-switcher@ebdendinelli.github.io",
+  "shell-version": [
+    "48"
+  ],
+  "version": 1
+}
