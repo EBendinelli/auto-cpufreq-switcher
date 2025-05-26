@@ -6,7 +6,7 @@
 Auto-cpufreq governor switcher for Gnome
 
 Currently tested on Arch / Gnome 8 / Wayland
-Supergfxctl v2.5.0
+auto-cpufreq v2.5.0
 
 Only supports default modes :
 - Balanced
