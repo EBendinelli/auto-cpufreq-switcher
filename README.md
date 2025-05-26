@@ -3,10 +3,10 @@
 >[!CAUTION]
 > This is a work in progress, mostly done with vibe coding. Use at your own risks!
 
-Auto-cpufreq governor switcher for Gnome
+A Gnome-shell extension to manuall switch Auto-cpufreq governor. Note that your password will be requested as auto-cpufreq commands are run with `sudo`.
 
 Currently tested on Arch / Gnome 8 / Wayland
-Supergfxctl v2.5.0
+auto-cpufreq v2.5.0
 
 Only supports default modes :
 - Balanced
