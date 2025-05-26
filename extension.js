@@ -10,17 +10,17 @@ import * as PopupMenu from "resource:///org/gnome/shell/ui/popupMenu.js";
 import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
 const AUTO_CPUFREQ_GOVERNORS = {
-  Integrated: {
+  Balanced: {
     name: "Balanced",
     iconName: "power-profile-balanced-symbolic",
     command: "pkexec sudo auto-cpufreq --force=reset",
   },
-  Hybrid: {
+  Powersave: {
     name: "Powersave",
     iconName: "power-profile-power-saver-symbolic",
     command: "pkexec sudo auto-cpufreq --force=powersave",
   },
-  Vfio: {
+  Performance: {
     name: "Performance",
     iconName: "power-profile-performance-symbolic",
     command: "pkexec auto-cpufreq --force=performance",
@@ -51,7 +51,7 @@ const GovernorToggle = GObject.registerClass(
       this._retryTimeoutId = null;
       this._path = path;
       this.headerIcon = Gio.icon_new_for_string(
-        `${this._path}/ico/cpu-symbolic.svg`
+        `${this._path}/ico/processor-symbolic.svg`
       );
       this._governorSection = new PopupMenu.PopupMenuSection();
       this.menu.addMenuItem(this._governorSection);
@@ -76,11 +76,11 @@ const GovernorToggle = GObject.registerClass(
             }
           }
           if (!found) {
-            this._setActiveGovernor("Integrated"); // fallback
+            this._setActiveGovernor("Balanced"); // fallback
           }
         },
         () => {
-          this._setActiveGovernor("Integrated");
+          this._setActiveGovernor("Balanced");
         }
       );
     }
@@ -193,7 +193,7 @@ const GovernorToggle = GObject.registerClass(
         );
       }
       this.set({ subtitle: params.name, iconName: params.iconName });
-      this.checked = this._activeGovernor !== "Integrated";
+      this.checked = this._activeGovernor !== "Balanced";
     }
 
     destroy() {
