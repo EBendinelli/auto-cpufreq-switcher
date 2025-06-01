@@ -1,7 +1,7 @@
 # Auto-cpufreq Switcher
 
 >[!CAUTION]
-> This is a work in progress, mostly done with vibe coding. Use at your own risks!
+> This is a work in progress. Use at your own risks!
 
 A Gnome-shell extension to manuall switch Auto-cpufreq governor. Note that your password will be requested as auto-cpufreq commands are run with `sudo`.
 
@@ -24,3 +24,7 @@ Only supports default modes :
     cp -rf auto-cpufreq-switcher ~/.local/share/gnome-shell/extensions/auto-cpufreq-switcher@ebdendinelli.github.io
     ```
 - Enable extension: `gnome-extensions enable auto-cpufreq-switcher@ebdendinelli.github.io`
+
+## Credits
+
+Heavily inspired by [GPU-Supergfxctl-Switch](https://github.com/chikobara/GPU-Switcher-Supergfxctl/blob/main/extension.js)
