@@ -10,17 +10,17 @@ import * as PopupMenu from "resource:///org/gnome/shell/ui/popupMenu.js";
 import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
 const AUTO_CPUFREQ_GOVERNORS = {
-  Balanced: {
+  balanced: {
     name: "Balanced",
     iconName: "power-profile-balanced-symbolic",
-    command: "pkexec sudo auto-cpufreq --force=reset",
+    command: "pkexec auto-cpufreq --force=reset",
   },
-  Powersave: {
+  powersave: {
     name: "Powersave",
     iconName: "power-profile-power-saver-symbolic",
-    command: "pkexec sudo auto-cpufreq --force=powersave",
+    command: "pkexec auto-cpufreq --force=powersave",
   },
-  Performance: {
+  performance: {
     name: "Performance",
     iconName: "power-profile-performance-symbolic",
     command: "pkexec auto-cpufreq --force=performance",
@@ -63,26 +63,57 @@ const GovernorToggle = GObject.registerClass(
     }
 
     _fetchCurrentGovernor() {
+      console.log("EXTENSION:Fetching current governor");
       this._executeCommandWithRetry(
-        ["auto-cpufreq", "--stats"],
+        ["timeout", "1s", "auto-cpufreq", "--stats"],
         (stdout) => {
           // Try to detect the current governor from the output
           let found = false;
-          for (const [key, params] of Object.entries(AUTO_CPUFREQ_GOVERNORS)) {
-            if (stdout.includes(params.name)) {
-              this._setActiveGovernor(key);
-              found = true;
-              break;
-            }
-          }
-          if (!found) {
-            this._setActiveGovernor("Balanced"); // fallback
-          }
+          //console.log(stdout)
+          const governorStatusText = stdout.match(/Setting to use:\s*"([^"]+)"/);
+          const currentGovernor = governorStatusText ? governorStatusText[1] : null;
+          this._setActiveGovernor(currentGovernor);
+          found = true;
         },
         () => {
-          this._setActiveGovernor("Balanced");
+          console.error(
+            "Failed to fetch current governor after multiple attempts"
+          );
+          this._setActiveGovernor("balanced");
         }
       );
+    }
+
+    _executeCommand(command, onSuccess, onFailure, retryCount = 0) {
+        try {
+        let proc = Gio.Subprocess.new(
+          command,
+          Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE
+        );
+
+        proc.communicate_utf8_async(null, null, (proc, res) => {
+          try {
+            let [ok, stdout, stderr] = proc.communicate_utf8_finish(res);
+            let success = false;
+            try {
+              success = proc.get_successful();
+            } catch (e) {
+              success = false;
+            }
+            // If not successful, or if stderr contains pkexec/sudo error, treat as failure
+            if (success && (!stderr || stderr.trim() === "")) {
+              onSuccess(stdout);
+            } else {
+              console.log(stderr);
+              onFailure(stderr);
+            }
+          } catch (e) {
+            onFailure(e.message);
+          }
+        });
+      } catch (e) {
+        onFailure(e.message);
+      }
     }
 
     _executeCommandWithRetry(command, onSuccess, onFailure, retryCount = 0) {
@@ -96,6 +127,7 @@ const GovernorToggle = GObject.registerClass(
           try {
             let [ok, stdout, stderr] = proc.communicate_utf8_finish(res);
             if (ok) {
+
               onSuccess(stdout);
             } else if (retryCount < MAX_RETRIES) {
               this._retryTimeoutId = GLib.timeout_add(
@@ -133,18 +165,17 @@ const GovernorToggle = GObject.registerClass(
 
     _addGovernorToggles(governors) {
       for (const governor of governors) {
-        if (AUTO_CPUFREQ_GOVERNORS[governor]) {
-          const params = AUTO_CPUFREQ_GOVERNORS[governor];
-          const item = new PopupMenu.PopupImageMenuItem(
-            params.name,
-            params.iconName
-          );
-          item.connect("activate", () => {
-            this._activateGovernor(governor, params.command);
-          });
-          this._governorItems.set(governor, item);
-          this._governorSection.addMenuItem(item);
-        }
+        const params = AUTO_CPUFREQ_GOVERNORS[governor];
+        const item = new PopupMenu.PopupImageMenuItem(
+          params.name,
+          params.iconName
+        );
+        item.connect("activate", () => {
+          console.log(`Activating governor: ${governor}`);
+          this._activateGovernor(governor, params.command);
+        });
+        this._governorItems.set(governor, item);
+        this._governorSection.addMenuItem(item);
       }
     }
 
@@ -152,7 +183,7 @@ const GovernorToggle = GObject.registerClass(
       if (governor === this._activeGovernor) {
         return;
       }
-      this._executeCommandWithRetry(
+      this._executeCommand(
         ["sh", "-c", command],
         () => {
           this._setActiveGovernor(governor);
@@ -161,10 +192,10 @@ const GovernorToggle = GObject.registerClass(
             `${AUTO_CPUFREQ_GOVERNORS[governor].name} governor activated successfully.`
           );
         },
-        () => {
+        (error) => {
           Main.notify(
             "CPU Governor Switcher",
-            `Failed to switch to ${AUTO_CPUFREQ_GOVERNORS[governor].name} governor. Please try again or check system logs."`
+            `Failed to switch to ${AUTO_CPUFREQ_GOVERNORS[governor].name} governor.\n${error ? error : 'Please try again or check system logs.'}`
           );
         }
       );
@@ -193,7 +224,7 @@ const GovernorToggle = GObject.registerClass(
         );
       }
       this.set({ subtitle: params.name, iconName: params.iconName });
-      this.checked = this._activeGovernor !== "Balanced";
+      this.checked = this._activeGovernor !== "balanced";
     }
 
     destroy() {
