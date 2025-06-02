@@ -69,11 +69,19 @@ const GovernorToggle = GObject.registerClass(
         (stdout) => {
           // Try to detect the current governor from the output
           let found = false;
-          //console.log(stdout)
-          const governorStatusText = stdout.match(/Setting to use:\s*"([^"]+)"/);
-          const currentGovernor = governorStatusText ? governorStatusText[1] : null;
-          this._setActiveGovernor(currentGovernor);
-          found = true;
+          console.log(stdout.includes("Warning"));
+          if (stdout.includes("Warning")){
+            //If Warning is present the governor was overriden manually and we check what it is set to
+            const governorStatusText = stdout.match(/Setting to use:\s*"([^"]+)"/);
+            console.log(governorStatusText);
+            const currentGovernor = governorStatusText ? governorStatusText[1] : null;
+            this._setActiveGovernor(currentGovernor);
+            found = true;
+          }else{
+            //Otherwise it means governor is set to balanced
+            this._setActiveGovernor("balanced");
+
+          }
         },
         () => {
           console.error(
