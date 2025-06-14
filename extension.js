@@ -10,7 +10,7 @@ import * as PopupMenu from "resource:///org/gnome/shell/ui/popupMenu.js";
 import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
 
 const AUTO_CPUFREQ_GOVERNORS = {
-  balanced: {
+  default: {
     name: "Balanced",
     iconName: "power-profile-balanced-symbolic",
     command: "pkexec auto-cpufreq --force=reset",
@@ -65,29 +65,25 @@ const GovernorToggle = GObject.registerClass(
     _fetchCurrentGovernor() {
       console.log("EXTENSION:Fetching current governor");
       this._executeCommandWithRetry(
-        ["timeout", "1s", "auto-cpufreq", "--stats"],
+        ["timeout", "1s", "auto-cpufreq", "--get-state"],
         (stdout) => {
-          // Try to detect the current governor from the output
           let found = false;
-          console.log(stdout.includes("Warning"));
-          if (stdout.includes("Warning")){
-            //If Warning is present the governor was overriden manually and we check what it is set to
-            const governorStatusText = stdout.match(/Setting to use:\s*"([^"]+)"/);
-            console.log(governorStatusText);
-            const currentGovernor = governorStatusText ? governorStatusText[1] : null;
-            this._setActiveGovernor(currentGovernor);
+          let sanitizedStdout = stdout.trim();
+          if (Object.keys(AUTO_CPUFREQ_GOVERNORS).includes(sanitizedStdout)) {
+            this._setActiveGovernor(sanitizedStdout);
             found = true;
           }else{
-            //Otherwise it means governor is set to balanced
-            this._setActiveGovernor("balanced");
-
+            console.error(
+              "Governor unknown, governor set to default"
+            );
+            this._setActiveGovernor("default");
           }
         },
         () => {
           console.error(
             "Failed to fetch current governor after multiple attempts"
           );
-          this._setActiveGovernor("balanced");
+          this._setActiveGovernor("default");
         }
       );
     }
