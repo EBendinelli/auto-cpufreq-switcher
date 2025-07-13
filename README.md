@@ -17,6 +17,12 @@ Only supports default modes :
 
 ## Installation
 
+### Gnome extension store
+
+- Download from the extension
+
+ [<img alt="EGO page" height="70" src="https://raw.githubusercontent.com/andyholmes/gnome-shell-extensions-badge/master/get-it-on-ego.svg?sanitize=true">](https://extensions.gnome.org/extension/8320/auto-cpufreq-switcher/)
+
 ### Using release package
 
 - Donwload zip file form [the latest release](https://github.com/EBendinelli/auto-cpufreq-switcher/releases)
