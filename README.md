@@ -17,6 +17,13 @@ Only supports default modes :
 
 ## Installation
 
+### Using release package
+
+- Donwload zip file form [the latest release](https://github.com/EBendinelli/auto-cpufreq-switcher/releases)
+- Install with `gnome-extensions install ~/Download/auto-cpufreq-switcher@ebdendinelli.github.io.zip`
+- Enable with `gnome-extensions enable auto-cpufreq-switcher@ebdendinelli.github.io.zip`
+
+### Using Git Clone
 - Install [auto-cpufreq](https://github.com/AdnanHodzic/auto-cpufreq)
 - Clone this repo `git clone https://github.com/EBendinelli/auto-cpufreq-switcher.git`
 - Copy 
