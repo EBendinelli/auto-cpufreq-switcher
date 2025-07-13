@@ -65,7 +65,7 @@ const GovernorToggle = GObject.registerClass(
     _fetchCurrentGovernor() {
       console.log("EXTENSION:Fetching current governor");
       this._executeCommandWithRetry(
-        ["timeout", "1s", "auto-cpufreq", "--get-state"],
+        ["auto-cpufreq", "--get-state"],
         (stdout) => {
           let found = false;
           let sanitizedStdout = stdout.trim();
@@ -134,6 +134,7 @@ const GovernorToggle = GObject.registerClass(
 
               onSuccess(stdout);
             } else if (retryCount < MAX_RETRIES) {
+              this._clearRetryTimeout();
               this._retryTimeoutId = GLib.timeout_add(
                 GLib.PRIORITY_DEFAULT,
                 RETRY_DELAY,

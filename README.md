@@ -27,4 +27,4 @@ Only supports default modes :
 
 ## Credits
 
-Heavily inspired by [GPU-Supergfxctl-Switch](https://github.com/chikobara/GPU-Switcher-Supergfxctl/blob/main/extension.js)
+Heavily inspired by [GPU-Supergfxctl-Switch](https://github.com/chikobara/GPU-Switcher-Supergfxctl/)
