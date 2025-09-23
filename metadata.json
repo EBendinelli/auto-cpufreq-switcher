@@ -3,8 +3,8 @@
   "description": "Simple governor switcher Gnome-Shell-Extension for auto-cpufreq",
   "uuid": "auto-cpufreq-switcher@ebdendinelli.github.io",
   "shell-version": [
-    "48"
+    "48", "49"
   ],
   "url": "https://github.com/EBendinelli/auto-cpufreq-switcher",
-  "version": 1.0
+  "version": 1.1
 }
