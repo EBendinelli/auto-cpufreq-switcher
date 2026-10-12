@@ -1,11 +1,8 @@
 # Auto-cpufreq Switcher
 
->[!CAUTION]
-> This is a work in progress. Use at your own risks!
-
 A Gnome-shell extension to manually switch [Auto-cpufreq](https://github.com/AdnanHodzic/auto-cpufreq) governor. Note that your password will be requested as auto-cpufreq commands are run with `sudo`.
 
-Currently tested on Arch / Gnome 48 / Wayland
+Currently tested on Arch / Gnome 48 to 51 / Wayland
 auto-cpufreq v2.6.0
 
 Only supports default modes :
